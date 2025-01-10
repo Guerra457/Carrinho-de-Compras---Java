@@ -1,5 +1,7 @@
 package org.compass.Entidades;
 
+import java.util.Objects;
+
 public class Carrinho {
     private int id, quantidade;
     private double valorUnitario, valorTotal;
@@ -54,5 +56,29 @@ public class Carrinho {
 
     public void setProduto(Produto produto) {
         this.produto = produto;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Carrinho carrinho = (Carrinho) o;
+        return id == carrinho.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Carrinho{" +
+                "id=" + id +
+                ", quantidade=" + quantidade +
+                ", valorUnitario=" + valorUnitario +
+                ", valorTotal=" + valorTotal +
+                ", produto=" + produto +
+                '}';
     }
 }
