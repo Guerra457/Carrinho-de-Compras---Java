@@ -2,9 +2,7 @@ package org.compass.BD;
 
 import org.compass.Excecoes.BdExcecao;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class ConexaoBD {
 
@@ -13,7 +11,7 @@ public class ConexaoBD {
     private static final String USERNAME = "postgres";
 
     //Senha do postgresql
-    private static final String PASSWORD = "";
+    private static final String PASSWORD = "464743";
 
     //Dados de caminho, porta e nome da base de dados que irá ser feita a conexão
     private static final String DATABASE_URL = "jdbc:postgresql://localhost:5432/DesafioCarrinhoCompras";
@@ -36,6 +34,26 @@ public class ConexaoBD {
                 conn.close();
             }
             catch (SQLException e){
+                throw new BdExcecao(e.getMessage());
+            }
+        }
+    }
+
+    public static void fecharStatement(Statement st){
+        if (st != null) {
+            try {
+                st.close();
+            } catch (SQLException e) {
+                throw new BdExcecao(e.getMessage());
+            }
+        }
+    }
+
+    public static void fecharResultSet(ResultSet rs){
+        if (rs != null) {
+            try {
+                rs.close();
+            } catch (SQLException e) {
                 throw new BdExcecao(e.getMessage());
             }
         }
