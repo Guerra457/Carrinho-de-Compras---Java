@@ -4,16 +4,15 @@ import java.util.Objects;
 
 public class Carrinho {
     private int id, quantidade;
-    private double valorUnitario, valorTotal;
+    private double valorTotal;
     private Produto produto;
 
     public Carrinho(){
 
     }
-    public Carrinho(int id, int quantidade, double valorUnitario, double valorTotal, Produto produto) {
+    public Carrinho(int id, int quantidade, double valorTotal, Produto produto) {
         this.id = id;
         this.quantidade = quantidade;
-        this.valorUnitario = valorUnitario;
         this.valorTotal = valorTotal;
         this.produto = produto;
     }
@@ -32,14 +31,6 @@ public class Carrinho {
 
     public void setQuantidade(int quantidade) {
         this.quantidade = quantidade;
-    }
-
-    public double getValorUnitario() {
-        return valorUnitario;
-    }
-
-    public void setValorUnitario(double valorUnitario) {
-        this.valorUnitario = valorUnitario;
     }
 
     public double getValorTotal() {
@@ -73,12 +64,9 @@ public class Carrinho {
 
     @Override
     public String toString() {
-        return "Carrinho{" +
-                "id=" + id +
+        return
+                produto +
                 ", quantidade=" + quantidade +
-                ", valorUnitario=" + valorUnitario +
-                ", valorTotal=" + valorTotal +
-                ", produto=" + produto +
-                '}';
+                ", valorTotal=" + valorTotal;
     }
 }
