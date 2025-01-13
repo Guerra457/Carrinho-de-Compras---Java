@@ -1,18 +1,22 @@
 package org.compass.Entidades;
 
+import org.compass.Excecoes.BdExcecao;
+
 import java.util.Objects;
 
 public class Estoque {
     private int id, quantidade;
-    private Produto produto;
+    private String nome, categoria;
+    private double valor;
 
-    public Estoque(){
+    public Estoque(){}
 
-    }
-    public Estoque(int id, int quantidade, Produto produto) {
+    public Estoque(int id, int quantidade, String nome, String categoria, double valor) {
         this.id = id;
         this.quantidade = quantidade;
-        this.produto = produto;
+        this.nome = nome;
+        this.categoria = categoria;
+        this.valor = valor;
     }
 
     public int getId() {
@@ -28,36 +32,41 @@ public class Estoque {
     }
 
     public void setQuantidade(int quantidade) {
+        if (quantidade < 0 ) throw new BdExcecao("Quantidade não pode ser menor que zero");
         this.quantidade = quantidade;
     }
 
-    public Produto getProduto() {
-        return produto;
+    public String getNome() {
+        return nome;
     }
 
-    public void setProduto(Produto produto) {
-        this.produto = produto;
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Estoque estoque = (Estoque) o;
-        return id == estoque.id;
+    public String getCategoria() {
+        return categoria;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
+    }
+
+    public double getValor() {
+        return valor;
+    }
+
+    public void setValor(double valor) {
+        if (valor < 0) throw new BdExcecao("Valor não pode ser menor que zero");
+        this.valor = valor;
     }
 
     @Override
     public String toString() {
-        return "Estoque{" +
-                "id=" + id +
-                ", quantidade=" + quantidade +
-                ", produto=" + produto +
-                '}';
+        return
+                "quantidade=" + quantidade +
+                ", nome='" + nome + '\'' +
+                ", categoria='" + categoria + '\'' +
+                ", valor=" + valor;
     }
 }
