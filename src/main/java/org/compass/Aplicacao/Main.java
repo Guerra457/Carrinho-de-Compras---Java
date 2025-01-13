@@ -2,18 +2,22 @@ package org.compass.Aplicacao;
 
 import org.compass.DAO.Implementacao.CarrinhoDaoJDBC;
 import org.compass.DAO.Implementacao.EstoqueDaoJDBC;
+import org.compass.Excecoes.BdExcecao;
+import org.compass.Excecoes.EntradaInvalidaExcecao;
+
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
         EstoqueDaoJDBC estoqueDaoJDBC = new EstoqueDaoJDBC();
         CarrinhoDaoJDBC carrinhoDaoJDBC = new CarrinhoDaoJDBC();
+        Scanner scanner = new Scanner(System.in);
 
+        boolean rodando = true;
 
-        try(Scanner scanner = new Scanner(System.in)){
-            boolean rodando = true;
-
-            while (rodando) {
+        while (rodando) {
+            try {
                 System.out.println("\n=== Loja Virtual ===");
                 System.out.println("Escolha uma opção: ");
                 System.out.println("1. Adicionar produto ao carrinho");
@@ -63,6 +67,10 @@ public class Main {
                     default:
                         System.out.println("Opção inválida. Tente novamente!");
                 }
+            }
+            catch (InputMismatchException e) {
+                EntradaInvalidaExcecao.tratarEntradaInvalida();
+                scanner.nextLine();
             }
         }
     }
