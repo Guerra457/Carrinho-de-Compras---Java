@@ -21,15 +21,23 @@ public class CarrinhoDaoJDBC implements CarrinhoDAO {
 
         if (estoque != null){
             if (estoque.getQuantidade() >= quantidade) {
-                String sql = "INSERT INTO Carrinho (nome, quantidade) VALUES (?, ?)";
+                String sql = "INSERT INTO Carrinho (nome, categoria, valor, quantidade, valor_total) VALUES (?, ?, ?, ?, ?)";
                 try (Connection conn = ConexaoBD.conexaoComPostgresql();
                     PreparedStatement pst = conn.prepareStatement(sql)) {
 
-                    pst.setString(1, nome);
-                    pst.setInt(2, quantidade);
+                    double valor = estoque.getValor();
+                    double valorTotal = quantidade * valor;
+
+                    pst.setString(1, estoque.getNome());
+                    pst.setString(2, estoque.getCategoria());
+                    pst.setDouble(3, valor);
+                    pst.setInt(4, quantidade);
+                    pst.setDouble(5, valorTotal);
+
                     pst.executeUpdate();
 
                     ConexaoBD.fecharStatement(pst);
+                    System.out.println("Produto adicionado ao carrinho com sucesso!");
                 }
                 catch (SQLException e){
                     throw new BdExcecao(e.getMessage());
@@ -50,8 +58,8 @@ public class CarrinhoDaoJDBC implements CarrinhoDAO {
         try (Connection conn = ConexaoBD.conexaoComPostgresql();
              PreparedStatement pst = conn.prepareStatement(sql)) {
 
-            pst.setString(1, nome);
-            pst.setInt(2, quantidade);
+            pst.setInt(1, quantidade);
+            pst.setString(2, nome);
 
             int linhasAfetadas = pst.executeUpdate();
 
