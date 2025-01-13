@@ -6,40 +6,24 @@ import java.sql.*;
 
 public class ConexaoBD {
 
-    //Nome do usuário do postgresql
-    private static Connection conn = null;
+    // Nome do usuário do PostgreSQL
     private static final String USERNAME = "postgres";
 
-    //Senha do postgresql
+    // Senha do PostgreSQL
     private static final String PASSWORD = "464743";
 
-    //Dados de caminho, porta e nome da base de dados que irá ser feita a conexão
+    // Dados de caminho, porta e nome da base de dados
     private static final String DATABASE_URL = "jdbc:postgresql://localhost:5432/DesafioCarrinhoCompras";
 
-    public static Connection conexaoComPostgresql(){
-        if (conn == null){
-            try {
-                conn = DriverManager.getConnection(DATABASE_URL, USERNAME, PASSWORD);
-            }
-            catch (SQLException e){
-                throw new BdExcecao(e.getMessage());
-            }
-        }
-        return conn;
-    }
-
-    public static void fecharConexaoComPostgresql(){
-        if (conn != null){
-            try {
-                conn.close();
-            }
-            catch (SQLException e){
-                throw new BdExcecao(e.getMessage());
-            }
+    public static Connection conexaoComPostgresql() {
+        try {
+            return DriverManager.getConnection(DATABASE_URL, USERNAME, PASSWORD);
+        } catch (SQLException e) {
+            throw new BdExcecao(e.getMessage());
         }
     }
 
-    public static void fecharStatement(Statement st){
+    public static void fecharStatement(Statement st) {
         if (st != null) {
             try {
                 st.close();
@@ -49,7 +33,7 @@ public class ConexaoBD {
         }
     }
 
-    public static void fecharResultSet(ResultSet rs){
+    public static void fecharResultSet(ResultSet rs) {
         if (rs != null) {
             try {
                 rs.close();
