@@ -11,12 +11,19 @@ public class Estoque {
 
     public Estoque(){}
 
-    public Estoque(int id, int quantidade, String nome, String categoria, double valor) {
-        this.id = id;
-        this.quantidade = quantidade;
+    public Estoque(int quantidade, String nome, String categoria, double valor) {
         this.nome = nome;
         this.categoria = categoria;
         this.valor = valor;
+        this.quantidade = quantidade;
+    }
+
+    public Estoque(int id, int quantidade, String nome, String categoria, double valor) {
+        this.id = id;
+        this.nome = nome;
+        this.categoria = categoria;
+        this.valor = valor;
+        this.quantidade = quantidade;
     }
 
     public int getId() {
@@ -64,9 +71,9 @@ public class Estoque {
     @Override
     public String toString() {
         return
-                "quantidade=" + quantidade +
-                ", nome='" + nome + '\'' +
-                ", categoria='" + categoria + '\'' +
-                ", valor=" + valor;
+                nome +
+                ", categoria = " + categoria +
+                ", valor = " + valor +
+                ", quantidade = " + quantidade + "\n";
     }
 }

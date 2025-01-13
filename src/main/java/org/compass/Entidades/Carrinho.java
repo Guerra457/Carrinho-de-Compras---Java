@@ -2,14 +2,20 @@ package org.compass.Entidades;
 
 import org.compass.Excecoes.BdExcecao;
 
-import java.util.Objects;
-
 public class Carrinho {
     private int id, quantidade;
     private String nome, categoria;
     private double valor, valorTotal;
 
-    public Carrinho(){}
+    public Carrinho(int quantidade, String nome, String categoria, double valor, double valorTotal){}
+
+    public Carrinho(int quantidade, String nome, String categoria, double valor){
+        this.quantidade = quantidade;
+        this.nome = nome;
+        this.categoria = categoria;
+        this.valor = valor;
+        this.valorTotal = quantidade * valor;
+    }
 
     public Carrinho(int id, int quantidade, String nome, String categoria, double valor, double valorTotal) {
         this.id = id;
@@ -74,10 +80,10 @@ public class Carrinho {
     @Override
     public String toString() {
         return
-                "quantidade=" + quantidade +
-                ", nome='" + nome + '\'' +
-                ", categoria='" + categoria + '\'' +
-                ", valor=" + valor +
-                ", valorTotal=" + valorTotal;
+                nome +
+                ", categoria = " + categoria +
+                ", valor = " + valor +
+                ", quantidade = " + quantidade +
+                ", valorTotal = " + (valor * quantidade)  + "\n";
     }
 }

@@ -13,20 +13,22 @@ import java.sql.SQLException;
 public class EstoqueDaoJDBC implements EstoqueDAO {
 
     @Override
-    public void atualizar(String nome, int novaQuantidade) {
+    public void atualizar(String nome, int quantidade) {
         String sql = "UPDATE Estoque SET quantidade = ? WHERE nome = ?";
         try (Connection conn = ConexaoBD.conexaoComPostgresql();
             PreparedStatement pst = conn.prepareStatement(sql)){
 
-            pst.setInt(1, novaQuantidade);
+            pst.setInt(1, quantidade);
             pst.setString(2, nome);
             int linhasAfetadas = pst.executeUpdate();
 
             if (linhasAfetadas > 0) {
                 System.out.println("Quantidade atualizada com sucesso!");
             } else {
-                System.out.println("Produto não encontrado!");
+                System.out.println("Produto não encontrado ou quantidade inválida!");
             }
+
+            ConexaoBD.fecharStatement(pst);
         }
         catch (SQLException e){
             throw new BdExcecao(e.getMessage());
@@ -36,6 +38,7 @@ public class EstoqueDaoJDBC implements EstoqueDAO {
     @Override
     public Estoque buscarPorNome(String nome) {
         String sql = "SELECT * FROM Estoque WHERE nome = ?";
+        Estoque estoque = null;
 
         try(Connection conn = ConexaoBD.conexaoComPostgresql();
             PreparedStatement pst = conn.prepareStatement(sql)) {
@@ -47,17 +50,13 @@ public class EstoqueDaoJDBC implements EstoqueDAO {
                 String categoria = rs.getString("categoria");
                 double valor = rs.getDouble("valor");
                 int quantidade = rs.getInt("quantidade");
-                return new Estoque(quantidade, nome, categoria, valor);
+                estoque = new Estoque(quantidade, nome, categoria, valor);
             }
-
-            ConexaoBD.fecharStatement(pst);
-            ConexaoBD.fecharResultSet(rs);
-            ConexaoBD.fecharConexaoComPostgresql();
         }
         catch (SQLException e){
             throw new BdExcecao(e.getMessage());
         }
-        return null;
+        return estoque;
     }
 
     @Override
@@ -76,6 +75,9 @@ public class EstoqueDaoJDBC implements EstoqueDAO {
                 Estoque estoque = new Estoque(quantidade, nome, categoria, valor);
                 System.out.printf(estoque.toString());
             }
+
+            ConexaoBD.fecharStatement(pst);
+            ConexaoBD.fecharResultSet(rs);
         }
         catch (SQLException e){
             throw new BdExcecao(e.getMessage());
