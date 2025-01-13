@@ -1,20 +1,23 @@
 package org.compass.Entidades;
 
+import org.compass.Excecoes.BdExcecao;
+
 import java.util.Objects;
 
 public class Carrinho {
     private int id, quantidade;
-    private double valorTotal;
-    private Produto produto;
+    private String nome, categoria;
+    private double valor, valorTotal;
 
-    public Carrinho(){
+    public Carrinho(){}
 
-    }
-    public Carrinho(int id, int quantidade, double valorTotal, Produto produto) {
+    public Carrinho(int id, int quantidade, String nome, String categoria, double valor, double valorTotal) {
         this.id = id;
         this.quantidade = quantidade;
+        this.nome = nome;
+        this.categoria = categoria;
+        this.valor = valor;
         this.valorTotal = valorTotal;
-        this.produto = produto;
     }
 
     public int getId() {
@@ -30,7 +33,33 @@ public class Carrinho {
     }
 
     public void setQuantidade(int quantidade) {
+        if (quantidade < 0 ) throw new BdExcecao("Quantidade não pode ser menor que zero");
         this.quantidade = quantidade;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public String getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
+    }
+
+    public double getValor() {
+        if (valor < 0 ) throw new BdExcecao("Valor não pode ser menor que zero");
+        return valor;
+    }
+
+    public void setValor(double valor) {
+        this.valor = valor;
     }
 
     public double getValorTotal() {
@@ -38,35 +67,17 @@ public class Carrinho {
     }
 
     public void setValorTotal(double valorTotal) {
+        if (valorTotal < 0 ) throw new BdExcecao("Valor total não pode ser menor que zero");
         this.valorTotal = valorTotal;
-    }
-
-    public Produto getProduto() {
-        return produto;
-    }
-
-    public void setProduto(Produto produto) {
-        this.produto = produto;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Carrinho carrinho = (Carrinho) o;
-        return id == carrinho.id;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
     }
 
     @Override
     public String toString() {
         return
-                produto +
-                ", quantidade=" + quantidade +
+                "quantidade=" + quantidade +
+                ", nome='" + nome + '\'' +
+                ", categoria='" + categoria + '\'' +
+                ", valor=" + valor +
                 ", valorTotal=" + valorTotal;
     }
 }
