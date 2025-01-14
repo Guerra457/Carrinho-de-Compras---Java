@@ -13,8 +13,8 @@ import java.sql.SQLException;
 public class EstoqueDaoJDBC implements EstoqueDAO {
 
     @Override
-    public void atualizar(String nome, int quantidade) {
-        String sql = "UPDATE Estoque SET quantidade = ? WHERE nome = ?";
+    public void atualizar(String nome, int quantidade, boolean exibirMensagem) {
+        String sql = "UPDATE Estoque SET quantidade = ? WHERE LOWER(nome) = LOWER(?)";
         try (Connection conn = ConexaoBD.conexaoComPostgresql();
             PreparedStatement pst = conn.prepareStatement(sql)){
 
@@ -22,9 +22,9 @@ public class EstoqueDaoJDBC implements EstoqueDAO {
             pst.setString(2, nome);
             int linhasAfetadas = pst.executeUpdate();
 
-            if (linhasAfetadas > 0) {
+            if (linhasAfetadas > 0 && exibirMensagem) {
                 System.out.println("Quantidade atualizada com sucesso!");
-            } else {
+            } else if (linhasAfetadas == 0){
                 System.out.println("Produto não encontrado ou quantidade inválida!");
             }
 
@@ -37,7 +37,7 @@ public class EstoqueDaoJDBC implements EstoqueDAO {
 
     @Override
     public Estoque buscarPorNome(String nome) {
-        String sql = "SELECT * FROM Estoque WHERE nome = ?";
+        String sql = "SELECT * FROM Estoque WHERE LOWER(nome) = LOWER(?)";
         Estoque estoque = null;
 
         try(Connection conn = ConexaoBD.conexaoComPostgresql();

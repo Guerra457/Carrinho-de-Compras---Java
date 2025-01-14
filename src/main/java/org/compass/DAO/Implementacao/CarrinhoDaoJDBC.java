@@ -36,6 +36,9 @@ public class CarrinhoDaoJDBC implements CarrinhoDAO {
 
                     pst.executeUpdate();
 
+                    int novaQuantidadeEstoque = estoque.getQuantidade() - quantidade;
+                    estoqueDaoJDBC.atualizar(nome, novaQuantidadeEstoque, false);
+
                     ConexaoBD.fecharStatement(pst);
                     System.out.println("Produto adicionado ao carrinho com sucesso!");
                 }
@@ -43,7 +46,7 @@ public class CarrinhoDaoJDBC implements CarrinhoDAO {
                     throw new BdExcecao(e.getMessage());
                 }
             } else {
-                System.out.println("Quantidade insuficiente!");
+                System.out.println("Quantidade insuficiente no estoque!");
             }
         }else {
             System.out.println("Produto Não encontrado");
@@ -53,53 +56,104 @@ public class CarrinhoDaoJDBC implements CarrinhoDAO {
 
     @Override
     public void atualizar(String nome, int quantidade) {
-        String sql = "UPDATE Carrinho SET quantidade = ? WHERE nome = ?";
+        EstoqueDaoJDBC estoqueDaoJDBC = new EstoqueDaoJDBC();
+        Estoque estoque = estoqueDaoJDBC.buscarPorNome(nome);
+        Carrinho carrinho = buscarPorNome(nome);
 
-        try (Connection conn = ConexaoBD.conexaoComPostgresql();
-             PreparedStatement pst = conn.prepareStatement(sql)) {
+        if (estoque != null && carrinho != null){
+            int difQuantidade = quantidade - carrinho.getQuantidade();
 
-            pst.setInt(1, quantidade);
-            pst.setString(2, nome);
+            if (estoque.getQuantidade() >= difQuantidade) {
+                String sql = "UPDATE Carrinho SET quantidade = ? WHERE LOWER(nome) = LOWER(?)";
 
-            int linhasAfetadas = pst.executeUpdate();
+                try (Connection conn = ConexaoBD.conexaoComPostgresql();
+                     PreparedStatement pst = conn.prepareStatement(sql)) {
 
-            if (linhasAfetadas > 0) {
-                System.out.println("Quantidade do produto atualizada com sucesso!");
-            } else {
-                System.out.println("Produto não encontrado!");
+                    pst.setInt(1, quantidade);
+                    pst.setString(2, nome);
+
+                    int linhasAfetadas = pst.executeUpdate();
+
+                    int novaQuantidadeEstoque = estoque.getQuantidade() - difQuantidade;
+                    estoqueDaoJDBC.atualizar(nome, novaQuantidadeEstoque, false);
+
+                    if (linhasAfetadas > 0) {
+                        System.out.println("Quantidade do produto atualizada com sucesso!");
+                    } else {
+                        System.out.println("Produto não encontrado!");
+                    }
+
+                    ConexaoBD.fecharStatement(pst);
+                } catch (SQLException e) {
+                    throw new BdExcecao(e.getMessage());
+                }
+            }else {
+                System.out.println("Estoque insuficiente");
             }
-
-        } catch (SQLException e) {
-            throw new BdExcecao(e.getMessage());
+        }else {
+            System.out.println("Produto não encontrado no estoque ou no carrinho!");
         }
     }
 
 
     @Override
     public void deletarPorNome(String nome) {
-        String sql = "DELETE FROM Carrinho WHERE nome = ?";
+        EstoqueDaoJDBC estoqueDaoJDBC = new EstoqueDaoJDBC();
+        Carrinho carrinho = buscarPorNome(nome);
 
-        try (Connection conn = ConexaoBD.conexaoComPostgresql();
-            PreparedStatement pst = conn.prepareStatement(sql)){
+        if (carrinho != null){
+            String sql = "DELETE FROM Carrinho WHERE LOWER(nome) = LOWER(?)";
 
-            pst.setString(1, nome);
-            int linhasAfetadas = pst.executeUpdate();
+            try (Connection conn = ConexaoBD.conexaoComPostgresql();
+                PreparedStatement pst = conn.prepareStatement(sql)){
 
-            if (linhasAfetadas > 0) {
-                System.out.println("Produto removido com sucesso!");
-            }else {
-                System.out.println("Produto não encontrado!");
+                Estoque estoque = estoqueDaoJDBC.buscarPorNome(nome);
+                if (estoque != null) {
+                    int novaQuantidadeEstoque = estoque.getQuantidade() + carrinho.getQuantidade();
+                    estoqueDaoJDBC.atualizar(nome, novaQuantidadeEstoque, false);
+                }
+
+                pst.setString(1, nome);
+                int linhasAfetadas = pst.executeUpdate();
+
+                if (linhasAfetadas > 0) {
+                    System.out.println("Produto removido com sucesso!");
+                }else {
+                    System.out.println("Produto não encontrado!");
+                }
             }
-        }
-        catch (SQLException e) {
-            throw new BdExcecao(e.getMessage());
+            catch (SQLException e) {
+                throw new BdExcecao(e.getMessage());
+            }
         }
     }
 
     @Override
     public Carrinho buscarPorNome(String nome) {
-        return null;
+        String sql = "SELECT * FROM Carrinho WHERE LOWER(nome) = LOWER(?)";
+        Carrinho carrinho = null;
+
+        try (Connection conn = ConexaoBD.conexaoComPostgresql();
+             PreparedStatement pst = conn.prepareStatement(sql)) {
+
+            pst.setString(1, nome);
+            ResultSet rs = pst.executeQuery();
+
+            if (rs.next()) {
+                String categoria = rs.getString("categoria");
+                double valor = rs.getDouble("valor");
+                int quantidade = rs.getInt("quantidade");
+                carrinho = new Carrinho(quantidade, nome, categoria, valor);
+            }
+
+            ConexaoBD.fecharStatement(pst);
+            ConexaoBD.fecharResultSet(rs);
+        } catch (SQLException e) {
+            throw new BdExcecao(e.getMessage());
+        }
+        return carrinho;
     }
+
 
     @Override
     public void buscarTodos() {
