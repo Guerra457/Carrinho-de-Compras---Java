@@ -16,6 +16,11 @@ public class CarrinhoDaoJDBC implements CarrinhoDAO {
 
     @Override
     public void inserir(String nome, int quantidade) {
+        if (quantidade <= 0) {
+            System.out.println("Quantidade inválida! Não é possível inserir valores negativos ou zero.");
+            return;
+        }
+
         EstoqueDaoJDBC estoqueDaoJDBC = new EstoqueDaoJDBC();
         Estoque estoque = estoqueDaoJDBC.buscarPorNome(nome);
 
@@ -56,6 +61,11 @@ public class CarrinhoDaoJDBC implements CarrinhoDAO {
 
     @Override
     public void atualizar(String nome, int quantidade) {
+        if (quantidade <= 0) {
+            System.out.println("Quantidade inválida! Não é possível atualizar para valores negativos ou zero.");
+            return;
+        }
+
         EstoqueDaoJDBC estoqueDaoJDBC = new EstoqueDaoJDBC();
         Estoque estoque = estoqueDaoJDBC.buscarPorNome(nome);
         Carrinho carrinho = buscarPorNome(nome);
@@ -101,32 +111,32 @@ public class CarrinhoDaoJDBC implements CarrinhoDAO {
         EstoqueDaoJDBC estoqueDaoJDBC = new EstoqueDaoJDBC();
         Carrinho carrinho = buscarPorNome(nome);
 
-        if (carrinho != null){
-            String sql = "DELETE FROM Carrinho WHERE LOWER(nome) = LOWER(?)";
+        String sql = "DELETE FROM Carrinho WHERE LOWER(nome) = LOWER(?)";
 
-            try (Connection conn = ConexaoBD.conexaoComPostgresql();
-                PreparedStatement pst = conn.prepareStatement(sql)){
+        try (Connection conn = ConexaoBD.conexaoComPostgresql();
+             PreparedStatement pst = conn.prepareStatement(sql)) {
 
+            if (carrinho != null) {
                 Estoque estoque = estoqueDaoJDBC.buscarPorNome(nome);
                 if (estoque != null) {
                     int novaQuantidadeEstoque = estoque.getQuantidade() + carrinho.getQuantidade();
                     estoqueDaoJDBC.atualizar(nome, novaQuantidadeEstoque, false);
                 }
-
-                pst.setString(1, nome);
-                int linhasAfetadas = pst.executeUpdate();
-
-                if (linhasAfetadas > 0) {
-                    System.out.println("Produto removido com sucesso!");
-                }else {
-                    System.out.println("Produto não encontrado!");
-                }
             }
-            catch (SQLException e) {
-                throw new BdExcecao(e.getMessage());
+
+            pst.setString(1, nome);
+            int linhasAfetadas = pst.executeUpdate();
+
+            if (linhasAfetadas > 0) {
+                System.out.println("Produto removido com sucesso!");
+            } else {
+                System.out.println("Produto não encontrado no carrinho!");
             }
+        } catch (SQLException e) {
+            throw new BdExcecao(e.getMessage());
         }
     }
+
 
     @Override
     public Carrinho buscarPorNome(String nome) {
