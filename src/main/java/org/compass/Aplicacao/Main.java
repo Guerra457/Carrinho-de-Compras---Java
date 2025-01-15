@@ -42,6 +42,9 @@ public class Main {
                         carrinhoDaoJDBC.inserir(nome, quantidade);
                         break;
                     case 2:
+                        System.out.println("Carrinho:");
+                        carrinhoDaoJDBC.buscarTodos();
+                        System.out.println();
                         System.out.println("Digite o nome do produto que deseja atualizar a quantidade: ");
                         String nomeATT = scanner.nextLine();
                         System.out.println("Digite a nova quantidade: ");
@@ -50,6 +53,9 @@ public class Main {
                         carrinhoDaoJDBC.atualizar(nomeATT, quantidadeATT);
                         break;
                     case 3:
+                        System.out.println("Carrinho:");
+                        carrinhoDaoJDBC.buscarTodos();
+                        System.out.println();
                         System.out.println("Digite o nome do produto que deseja remover do carrinho: ");
                         String nomeRem = scanner.nextLine();
                         carrinhoDaoJDBC.deletarPorNome(nomeRem);
